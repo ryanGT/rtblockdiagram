@@ -3,8 +3,12 @@
 
 #include "Arduino.h"
 
-int mysat(int vin);
+#define MAXLEN 10
 
+int mysat_rtbd(int vin);
+
+void shift_array_rtbd(float new_in, float vect_in[], int len_vect);
+  
 class block{
  public:
   // pure virtual function
@@ -119,6 +123,24 @@ class PD_control_block: public block{
 };
 
 
+class digcomp_block: public block{
+ public:
+  block* input;
+  int _len_out;
+  int _len_in;
+  float *_b_vect;
+  float *_a_vect;
+  float _in_vect[MAXLEN];
+  float _out_vect[MAXLEN];
+  int input_value;
+  int output;
+  digcomp_block(float *b_vect, float *a_vect, int len_in, int len_out, block *in);
+  //digcomp_block(float *b_vect, float *a_vect, block *in);
+  //float calc_out(float new_in);
+  int get_output(float t);
+};
+  
+
 class saturation_block: public block{
  public:
   block* input;
@@ -129,12 +151,6 @@ class saturation_block: public block{
 
   int get_output(float t);
 };
-
-
-
-
-
-
 
 
 #endif

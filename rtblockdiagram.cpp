@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "rtblockdiagram.h"
 
-int mysat(int vin){
+int mysat_rtbd(int vin){
   int mymax = 255;
   int mymin = -255;
   int vout;
@@ -17,6 +17,15 @@ int mysat(int vin){
   }
 
   return(vout);
+}
+
+
+void shift_array_rtbd(float new_in, float vect_in[], int len_vect){
+  int i;
+  for(i=len_vect-1; i > 0;i--){
+    vect_in[i]=vect_in[i - 1]; // copy
+  }
+  vect_in[0] = new_in;
 }
 
 
@@ -50,7 +59,7 @@ void h_bridge_actuator::setup(){
 };
 			 
 void h_bridge_actuator::send_command(int speed){
-    speed = mysat(speed);
+    speed = mysat_rtbd(speed);
 
     if (speed > 0){
       digitalWrite(in1, LOW);
@@ -174,12 +183,40 @@ void PD_control_block::save_values(float t){
 };
 
 
+digcomp_block::digcomp_block(float *b_vect, float *a_vect, int len_in, int len_out, block *in){
+  _a_vect = a_vect;
+  _b_vect = b_vect;
+  //_len_in = sizeof(_b_vect)/sizeof(_b_vect[0]);
+  //_len_out = sizeof(_a_vect)/sizeof(_a_vect[0]);
+  _len_in = len_in;
+  _len_out = len_out;
+  input = in;
+}
+
+
+int digcomp_block::get_output(float t){
+  input_value = input->get_output(t);
+  float new_out = 0.0;
+  shift_array_rtbd(input_value, _in_vect, _len_in);
+  int i;
+  for(i=0; i<_len_in; i++){
+    new_out += _in_vect[i]*_b_vect[i];
+  }
+  for(i=1; i<_len_out; i++){
+    new_out -= _out_vect[i-1]*_a_vect[i];//out_vect hasn't been shifted yet, so the indices are off by 1
+  }
+  shift_array_rtbd(new_out, _out_vect, _len_out);
+  output = (int)new_out;
+  return(output);
+}
+
+
 saturation_block::saturation_block(block *in){
-    input = in;
+  input = in;
 };
 
 int saturation_block::get_output(float t){
-    input_value = input->get_output(t);
-    output = mysat(input_value);
-    return(output);
+  input_value = input->get_output(t);
+  output = mysat_rtbd(input_value);
+  return(output);
 };
