@@ -11,8 +11,11 @@ void shift_array_rtbd(float new_in, float vect_in[], int len_vect);
   
 class block{
  public:
+  int output;
+  int read_output(float t);
   // pure virtual function
-  virtual int get_output(float t);
+  virtual int find_output(float t);
+
 };
 
 
@@ -23,7 +26,7 @@ class step_input: public block{
   int amp;
   step_input(float switch_on_time, int Amp);
 
-  int get_output(float t);
+  int find_output(float t);
 };
 
 
@@ -74,7 +77,8 @@ class plant: public block{
 
   int get_reading();
   void send_command(int speed);
-  int get_output(float t);
+  //int read_output(float t);
+  int find_output(float t);
 };
 
 
@@ -86,7 +90,8 @@ class summing_junction: public block{
   
   summing_junction(block *in1, block *in2);
 
-  int get_output(float t);
+  //int read_output(float t);
+  int find_output(float t);
 };
 
 
@@ -95,11 +100,12 @@ class P_control_block: public block{
   float Kp;
   block* input;
   int input_value;
-  int output;
+  //int output;
   
   P_control_block(float KP, block *in);
 
-  int get_output(float t);
+  //int read_output(float t);
+  int find_output(float t);
 };
 
 
@@ -114,11 +120,12 @@ class PD_control_block: public block{
   int din;
   block* input;
   int input_value;
-  int output;
+  //int output;
   
   PD_control_block(float KP, float KD, block *in);
 
-  int get_output(float t);
+  //int read_output(float t);
+  int find_output(float t);
   void save_values(float t);
 };
 
@@ -133,11 +140,12 @@ class digcomp_block: public block{
   float _in_vect[MAXLEN];
   float _out_vect[MAXLEN];
   int input_value;
-  int output;
+  //int output;
   digcomp_block(float *b_vect, float *a_vect, int len_in, int len_out, block *in);
   //digcomp_block(float *b_vect, float *a_vect, block *in);
   //float calc_out(float new_in);
-  int get_output(float t);
+  //int read_output(float t);
+  int find_output(float t);
 };
   
 
@@ -145,11 +153,12 @@ class saturation_block: public block{
  public:
   block* input;
   int input_value;
-  int output;
+  //int output;
   
   saturation_block(block *in);
 
-  int get_output(float t);
+  //int read_output(float t);
+  int find_output(float t);
 };
 
 
