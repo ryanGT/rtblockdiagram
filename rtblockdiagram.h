@@ -12,9 +12,15 @@ void shift_array_rtbd(float new_in, float vect_in[], int len_vect);
 class block{
  public:
   int output;
-  int read_output(float t);
+  int read_output(float t);//reading the output of a block can be done
+                           //as often as needed by subsequent blocks;
+                           //read_output just returns the variable
+                           //output, set in the find_output method
   // pure virtual function
-  virtual int find_output(float t);
+  virtual int find_output(float t);//find_output should only be called
+                                   //once per time step, but must be
+                                   //called for each block in the
+                                   //system
 
 };
 
