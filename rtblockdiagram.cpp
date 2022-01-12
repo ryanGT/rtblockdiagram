@@ -201,7 +201,7 @@ void PD_control_block::save_values(float t){
 };
 
 
-digcomp_block::digcomp_block(float *b_vect, float *a_vect, int len_in, int len_out, block *in){
+digcomp_block::digcomp_block(float *b_vect, float *a_vect, int len_in, int len_out, block *in=NULL){
   _a_vect = a_vect;
   _b_vect = b_vect;
   //_len_in = sizeof(_b_vect)/sizeof(_b_vect[0]);
