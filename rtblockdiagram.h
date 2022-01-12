@@ -12,7 +12,7 @@ void shift_array_rtbd(float new_in, float vect_in[], int len_vect);
 class block{
  public:
   int output;
-  int read_output(float t);//reading the output of a block can be done
+  int read_output();//reading the output of a block can be done
                            //as often as needed by subsequent blocks;
                            //read_output just returns the variable
                            //output, set in the find_output method
@@ -21,7 +21,15 @@ class block{
                                    //once per time step, but must be
                                    //called for each block in the
                                    //system
+};
 
+
+class block_with_one_input: public block{
+ public:
+  block* input;
+  void set_input(block* new_input){
+    input = new_input;
+  }
 };
 
 
@@ -74,14 +82,15 @@ class encoder: public sensor{
 };
 
 
-class plant: public block{
+class plant: public block_with_one_input{
  public:
   actuator* Actuator;
   sensor* Sensor;
-  
+  // a plant block should still have an input block pointer  
   plant(actuator *myact, sensor *mysense);
 
   int get_reading();
+  void send_command();
   void send_command(int speed);
   //int read_output(float t);
   int find_output(float t);
@@ -94,17 +103,18 @@ class summing_junction: public block{
   block* input2;
   int value1, value2;
   
-  summing_junction(block *in1, block *in2);
+  summing_junction(block *in1=NULL, block *in2=NULL);
 
+  void set_inputs(block *IN1, block *IN2);
   //int read_output(float t);
   int find_output(float t);
 };
 
 
-class P_control_block: public block{
+class P_control_block: public block_with_one_input{
  public:
   float Kp;
-  block* input;
+  //block* input;
   int input_value;
   //int output;
   
@@ -116,7 +126,7 @@ class P_control_block: public block{
 
 
 
-class PD_control_block: public block{
+class PD_control_block: public block_with_one_input{
  public:
   float Kp;
   float Kd;
@@ -124,11 +134,11 @@ class PD_control_block: public block{
   int prev_in;
   float dt, din_dt;
   int din;
-  block* input;
+  //block* input;
   int input_value;
   //int output;
   
-  PD_control_block(float KP, float KD, block *in);
+  PD_control_block(float KP, float KD, block *in=NULL);
 
   //int read_output(float t);
   int find_output(float t);
@@ -136,9 +146,9 @@ class PD_control_block: public block{
 };
 
 
-class digcomp_block: public block{
+class digcomp_block: public block_with_one_input{
  public:
-  block* input;
+  //block* input;
   int _len_out;
   int _len_in;
   float *_b_vect;
@@ -155,13 +165,13 @@ class digcomp_block: public block{
 };
   
 
-class saturation_block: public block{
+class saturation_block: public block_with_one_input{
  public:
-  block* input;
+  //block* input;
   int input_value;
   //int output;
   
-  saturation_block(block *in);
+  saturation_block(block *in=NULL);
 
   //int read_output(float t);
   int find_output(float t);

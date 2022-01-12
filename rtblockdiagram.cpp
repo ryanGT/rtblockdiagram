@@ -29,7 +29,7 @@ void shift_array_rtbd(float new_in, float vect_in[], int len_vect){
 }
 
 
-int block::read_output(float t){
+int block::read_output(){
   return(output);
 }
 
@@ -119,9 +119,18 @@ int plant::get_reading(){
     return Sensor->get_reading();
 };
 
-void plant::send_command(int speed){
-    Actuator->send_command(speed);
+void plant::send_command(){
+  int speed;
+  speed = input->read_output();
+  Actuator->send_command(speed);
 };
+
+void plant::send_command(int speed){
+  // backward compatible version for when reading from input is not
+  // prefered
+  Actuator->send_command(speed);
+};
+
 
 int plant::find_output(float t){
     output = Sensor->get_reading();
@@ -136,27 +145,30 @@ summing_junction::summing_junction(block *in1, block *in2){
 
 int summing_junction::find_output(float t){
   //int output;
-    value1 = input1->read_output(t);
-    value2 = input2->read_output(t);
+    value1 = input1->read_output();
+    value2 = input2->read_output();
     output = value1 - value2;
     return(output);
 };
 
+void summing_junction::set_inputs(block *IN1, block *IN2){
+  input1 = IN1;
+  input2 = IN2;
+}
 
-
-P_control_block::P_control_block(float KP, block *in){
+P_control_block::P_control_block(float KP, block *in=NULL){
     input = in;
     Kp = KP;
 };
 
 
 int P_control_block::find_output(float t){
-    input_value = input->read_output(t);
+    input_value = input->read_output();
     output = (int)(Kp*input_value);
     return(output);
 };
 
-PD_control_block::PD_control_block(float KP, float KD, block *in){
+PD_control_block::PD_control_block(float KP, float KD, block *in=NULL){
     input = in;
     Kp = KP;
     Kd = KD;
@@ -165,10 +177,10 @@ PD_control_block::PD_control_block(float KP, float KD, block *in){
 
 int PD_control_block::find_output(float t){
     cur_t = t;
-    input_value = input->read_output(t);
+    input_value = input->read_output();
     dt = t - prev_t;
     din = input_value-prev_in;
-    din_dt = din/dt;
+    din_dt = ((float)din)/dt;
     output = (int)(Kp*input_value + Kd*din_dt);
     /* if (prev_t < 0){ */
     /*   output = (int)(Kp*input_value); */
@@ -178,8 +190,8 @@ int PD_control_block::find_output(float t){
          /*   
          /*   output = (int)(Kp*input_value + Kd*din_dt); */
     /* } */
-    /* prev_in = input_value; */
-    //prev_t = cur_t;
+    prev_in = input_value;
+    prev_t = cur_t;
     return(output);
 };
 
@@ -201,7 +213,7 @@ digcomp_block::digcomp_block(float *b_vect, float *a_vect, int len_in, int len_o
 
 
 int digcomp_block::find_output(float t){
-  input_value = input->read_output(t);
+  input_value = input->read_output();
   float new_out = 0.0;
   float float_in;
   float_in = (float)input_value;
@@ -219,12 +231,12 @@ int digcomp_block::find_output(float t){
 }
 
 
-saturation_block::saturation_block(block *in){
+saturation_block::saturation_block(block *in=NULL){
   input = in;
 };
 
 int saturation_block::find_output(float t){
-  input_value = input->read_output(t);
+  input_value = input->read_output();
   output = mysat_rtbd(input_value);
   return(output);
 };
