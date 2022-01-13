@@ -51,6 +51,19 @@ int step_input::find_output(float t){
 };
 
 
+pwm_output::pwm_output(int PWM_PIN){
+  pwm_pin = PWM_PIN;
+};
+
+void pwm_output::setup(){
+  pinMode(pwm_pin, OUTPUT);
+}
+
+void pwm_output::send_command(int speed){
+  analogWrite(pwm_pin, speed);
+}
+
+
 h_bridge_actuator::h_bridge_actuator(int IN1_PIN, int IN2_PIN, int PWM_PIN){
     in1 = IN1_PIN;
     in2 = IN2_PIN;
@@ -58,9 +71,9 @@ h_bridge_actuator::h_bridge_actuator(int IN1_PIN, int IN2_PIN, int PWM_PIN){
 };
 
 void h_bridge_actuator::setup(){
-    pinMode(pwm_pin, OUTPUT);
-    pinMode(in1, OUTPUT);
-    pinMode(in2, OUTPUT);
+  pinMode(pwm_pin, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
 };
 			 
 void h_bridge_actuator::send_command(int speed){
@@ -109,6 +122,14 @@ int encoder::get_reading(){
 };
 
 
+analog_sensor::analog_sensor(int ANALOG_PIN){
+  analog_pin = ANALOG_PIN;
+};
+
+int analog_sensor::get_reading(){
+  output = analogRead(analog_pin);
+  return(output);
+};
 
 plant::plant(actuator *myact, sensor *mysense){
     Actuator = myact;

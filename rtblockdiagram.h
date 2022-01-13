@@ -61,6 +61,16 @@ class h_bridge_actuator: public actuator{
 };
 
 
+class pwm_output: public actuator{
+public:
+  int pwm_pin;
+  pwm_output(int PWM_PIN);
+
+  void setup();
+  void send_command(int speed);
+};
+
+
 class sensor{
  public:
   // pure virtual function
@@ -78,6 +88,17 @@ class encoder: public sensor{
   encoder(int ENCODER_PIN_B);
   
   void encoderISR();
+  int get_reading();
+};
+
+
+class analog_sensor: public sensor{
+ public:
+  int analog_pin;
+  int output;
+
+  analog_sensor(int ANALOG_pin);
+  
   int get_reading();
 };
 
