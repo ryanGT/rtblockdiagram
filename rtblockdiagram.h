@@ -160,7 +160,7 @@ class P_control_block: public block_with_one_input{
   int input_value;
   //int output;
   
-  P_control_block(float KP, block *in);
+  P_control_block(float KP, block *in=NULL);
 
   //int read_output(float t);
   int find_output(float t);
