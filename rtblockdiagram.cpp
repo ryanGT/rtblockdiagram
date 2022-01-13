@@ -137,6 +137,30 @@ int plant::find_output(float t){
     return(output);
 };
 
+plant_no_actuator::plant_no_actuator(sensor *mysense){
+  Sensor = mysense;
+};
+
+
+int plant_no_actuator::get_reading(){
+  return Sensor->get_reading();
+};
+
+void plant_no_actuator::send_command(){
+  //do nothing
+  // - kept for consistency with other plants that have actuators
+};
+
+void plant_no_actuator::send_command(int speed){
+  //do nothing
+};
+
+
+int plant_no_actuator::find_output(float t){
+  output = Sensor->get_reading();
+  return(output);
+};
+
 
 summing_junction::summing_junction(block *in1, block *in2){
     input1 = in1;

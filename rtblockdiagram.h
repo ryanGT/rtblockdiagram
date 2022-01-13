@@ -97,6 +97,27 @@ class plant: public block_with_one_input{
 };
 
 
+class plant_no_actuator: public block_with_one_input{
+  // used to model a plant that has a sensor, but no actuator
+  // - for example, the flexible beam used in EGR 345 lab
+  //   vibrates because of the motion of the DC motor and
+  //   its output is measured with an accelerometer
+  //     - as far as the Arduino is concerned, nothing needs to
+  //       be done to cause the beam to vibrate
+  //          - there is not explicit actuator
+public:
+  sensor* Sensor;
+  // a plant block should still have an input block pointer  
+  plant_no_actuator(sensor *mysense);
+
+  int get_reading();
+  void send_command();//keeping these for consitency
+  void send_command(int speed);
+  //int read_output(float t);
+  int find_output(float t);
+};
+
+
 class summing_junction: public block{
  public:
   block* input1;
