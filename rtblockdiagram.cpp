@@ -34,6 +34,28 @@ int block::read_output(){
 }
 
 
+loop_count_block::loop_count_block(){};//empty constructor
+
+
+int loop_count_block::find_output(int n){
+  //this is basically just letting the Arduino loop count pass
+  //through, but making it behave like a source block
+  output = n;
+  return(n);
+}
+
+
+int_constant_block::int_constant_block(int myvalue){
+  value = myvalue;
+};
+
+
+int int_constant_block::find_output(){
+  output = value;
+  return(output);
+}
+
+
 step_input::step_input(float switch_on_time, int Amp){
     on_time = switch_on_time;
     amp = Amp;
@@ -200,6 +222,56 @@ void summing_junction::set_inputs(block *IN1, block *IN2){
   input1 = IN1;
   input2 = IN2;
 }
+
+
+int greater_than_block::find_output(){
+  //int output;
+  value1 = input1->read_output();
+  value2 = input2->read_output();
+  if (value1 > value2){
+    output = 1;
+  }
+  else{
+      output = 0;
+  }
+  return(output);
+};
+
+int greater_than_block::find_output(float t){
+  int temp = find_output();
+  return(temp);
+};
+
+greater_than_block::greater_than_block(block *in1, block *in2){
+  input1 = in1;
+  input2 = in2;
+};
+
+if_block::if_block(block *bool_in=NULL, block *in1=NULL, block *in2=NULL){
+  bool_block = bool_in;
+  input1 = in1;
+  input2 = in2;  
+}
+
+void if_block::set_inputs(block *BOOLIN, block *IN1, block *IN2){
+  bool_block = BOOLIN;
+  input1 = IN1;
+  input2 = IN2;
+}
+
+int if_block::find_output(){
+  //int output;
+  bool_value = bool_block->read_output();
+  value1 = input1->read_output();
+  value2 = input2->read_output();
+  if (bool_value > 0){
+    output = value1;
+  }
+  else{
+    output = value2;
+  }
+  return(output);
+};
 
 P_control_block::P_control_block(float KP, block *in=NULL){
     input = in;

@@ -17,10 +17,30 @@ class block{
                            //read_output just returns the variable
                            //output, set in the find_output method
   // pure virtual function
-  virtual int find_output(float t);//find_output should only be called
-                                   //once per time step, but must be
-                                   //called for each block in the
-                                   //system
+  
+  // every valid block class must have a find_output method, but some
+  // have inputs and some do not
+  // - punting for now and not requiring anything using a virtual funtion
+
+  //virtual int find_output();//find_output should only be called
+                            //once per time step, but must be
+                            //called for each block in the
+                            //system
+};
+
+
+class loop_count_block: public block{
+public:
+  loop_count_block();
+  int find_output(int n);
+};
+
+
+class int_constant_block: public block{
+public:
+  int value;
+  int_constant_block(int myvalue);
+  int find_output();
 };
 
 
@@ -150,6 +170,24 @@ class summing_junction: public block{
   void set_inputs(block *IN1, block *IN2);
   //int read_output(float t);
   int find_output(float t);
+};
+
+
+class greater_than_block: public summing_junction{
+public:
+  greater_than_block(block *in1=NULL, block *in2=NULL);
+  int find_output();
+  int find_output(float t);
+};
+
+
+class if_block: public greater_than_block{
+public:
+  block *bool_block;
+  int bool_value;
+  if_block(block *bool_in=NULL, block *in1=NULL, block *in2=NULL);
+  void set_inputs(block *BOOLIN, block *IN1, block *IN2);
+  int find_output();
 };
 
 
