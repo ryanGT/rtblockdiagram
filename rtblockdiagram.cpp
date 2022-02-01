@@ -73,6 +73,25 @@ int step_input::find_output(float t){
 };
 
 
+pulse_input::pulse_input(float switch_on_time, float switch_off_time, int Amp){
+  on_time = switch_on_time;
+  off_time = switch_off_time;
+  amp = Amp;
+}
+
+
+int pulse_input::find_output(float t){
+  //int output=0;
+  if (t > on_time) && (t < off_time){
+    output = amp;
+  }
+  else{
+    output = 0;
+  }
+  return(output);
+};
+
+
 pwm_output::pwm_output(int PWM_PIN){
   pwm_pin = PWM_PIN;
 };

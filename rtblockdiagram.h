@@ -63,6 +63,16 @@ class step_input: public block{
   int find_output(float t);
 };
 
+class pulse_input: public block{
+public:
+  float on_time;
+  float off_time;
+  int amp;
+  pulse_input(float switch_on_time, float switch_off_time, int Amp);
+
+  int find_output(float t);
+};
+
 
 class actuator{
  public:
