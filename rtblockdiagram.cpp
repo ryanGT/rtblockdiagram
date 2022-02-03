@@ -82,7 +82,7 @@ pulse_input::pulse_input(float switch_on_time, float switch_off_time, int Amp){
 
 int pulse_input::find_output(float t){
   //int output=0;
-  if (t > on_time) && (t < off_time){
+  if ((t > on_time) && (t < off_time)){
     output = amp;
   }
   else{
@@ -224,6 +224,29 @@ int plant_no_actuator::find_output(float t){
 };
 
 
+
+plant_with_double_actuator::plant_with_double_actuator(double_actuator *myact, sensor *mysense){
+  dblActuator = myact;
+  Sensor = mysense;
+}
+
+void plant_with_double_actuator::send_commands(){
+  int speed1, speed2;
+  speed1 = input1->read_output();
+  speed2 = input2->read_output();
+  dblActuator->send_commands(speed1, speed2);
+}
+
+
+int plant_with_double_actuator::get_reading(){
+  return Sensor->get_reading();
+};
+
+int plant_with_double_actuator::find_output(float t){
+  output = Sensor->get_reading();
+  return(output);
+};
+
 summing_junction::summing_junction(block *in1, block *in2){
     input1 = in1;
     input2 = in2;
@@ -264,6 +287,24 @@ int greater_than_block::find_output(float t){
 greater_than_block::greater_than_block(block *in1, block *in2){
   input1 = in1;
   input2 = in2;
+};
+
+
+int addition_block::find_output(){
+  //int output;
+  value1 = input1->read_output();
+  value2 = input2->read_output();
+  output = value1 + value2;
+  return(output);
+};
+
+
+int subtraction_block::find_output(){
+  //int output;
+  value1 = input1->read_output();
+  value2 = input2->read_output();
+  output = value1 - value2;
+  return(output);
 };
 
 if_block::if_block(block *bool_in=NULL, block *in1=NULL, block *in2=NULL){

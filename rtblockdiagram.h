@@ -47,8 +47,19 @@ public:
 class block_with_one_input: public block{
  public:
   block* input;
-  void set_input(block* new_input){
+  void set_input_block(block* new_input){
     input = new_input;
+  }
+};
+
+class block_with_two_inputs: public block{
+public:
+  block* input1;
+  block* input2;
+  int value1, value2;
+  void set_input_blocks(block* IN1, block* IN2){
+    input1 = IN1;
+    input2 = IN2;
   }
 };
 
@@ -78,6 +89,14 @@ class actuator{
  public:
   // pure virtual function
   virtual void send_command(int speed) = 0;
+};
+
+
+class double_actuator{
+  //an actuator that has two inputs, such as an h-bridge with two motors
+public:
+  // pure virtual function
+  virtual void send_commands(int speed1, int speed2) = 0;
 };
 
 
@@ -169,6 +188,23 @@ public:
 };
 
 
+class plant_with_double_actuator: public block_with_two_inputs{
+  //a plant that has a double actuator, such as a differential drive robot
+public:
+  double_actuator* dblActuator;
+  sensor* Sensor;
+  // a plant block should still have an input block pointer  
+  plant_with_double_actuator(double_actuator *myact, sensor *mysense);
+
+  int get_reading();
+  void send_commands();
+  //int read_output(float t);
+  int find_output(float t);
+  int find_output();  
+};
+
+
+
 class summing_junction: public block{
  public:
   block* input1;
@@ -183,12 +219,28 @@ class summing_junction: public block{
 };
 
 
-class greater_than_block: public summing_junction{
+class greater_than_block: public block_with_two_inputs{
 public:
   greater_than_block(block *in1=NULL, block *in2=NULL);
   int find_output();
   int find_output(float t);
 };
+
+class addition_block: public greater_than_block{
+public:
+  //addition_block(block *in1=NULL, block *in2=NULL);
+  int find_output();
+  int find_output(float t);
+};
+
+
+class subtraction_block: public greater_than_block{
+public:
+  //subtraction_block(block *in1=NULL, block *in2=NULL);
+  int find_output();
+  int find_output(float t);
+};
+
 
 
 class if_block: public greater_than_block{
