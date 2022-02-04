@@ -229,14 +229,14 @@ int plant_no_actuator::find_output(float t){
 plant_with_double_actuator::plant_with_double_actuator(double_actuator *myact, sensor *mysense){
   dblActuator = myact;
   Sensor = mysense;
-}
+};
 
 void plant_with_double_actuator::send_commands(){
   int speed1, speed2;
   speed1 = input1->read_output();
   speed2 = input2->read_output();
   dblActuator->send_commands(speed1, speed2);
-}
+};
 
 
 int plant_with_double_actuator::get_reading(){
@@ -246,6 +246,32 @@ int plant_with_double_actuator::get_reading(){
 int plant_with_double_actuator::find_output(float t){
   output = Sensor->get_reading();
   return(output);
+};
+
+plant_with_double_actuator_two_sensors::plant_with_double_actuator_two_sensors(double_actuator *myact,sensor *mysense1, sensor *mysense2) : plant_with_double_actuator(myact, mysense1)
+
+{
+  dblActuator = myact;
+  Sensor1 = mysense1;
+  Sensor2 = mysense2;
+};
+
+int plant_with_double_actuator_two_sensors::find_output(){
+  // in the loop code, the plant's find_output method is called, and
+  // not the sensors.  In order to make the sensors behave as blocks
+  // for the two sensors plant, I need to call the sensors find_output
+  // methods to ensure that the output variable is set for each sensor.
+  output1 = Sensor1->find_output();
+  output2 = Sensor2->find_output();
+  return(output1);
+};
+
+int plant_with_double_actuator_two_sensors::find_output(float t){
+  // what is the right way to not have two find_output methods that are redundant?
+  // - I probably never have a time dependent plant (LTI systems!)
+  output1 = Sensor1->find_output();
+  output2 = Sensor2->find_output();
+  return(output1);
 };
 
 summing_junction::summing_junction(block *in1, block *in2){

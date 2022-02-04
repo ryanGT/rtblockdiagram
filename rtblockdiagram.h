@@ -212,6 +212,24 @@ public:
 
 
 
+class plant_with_double_actuator_two_sensors: public plant_with_double_actuator{
+  //a plant that has a double actuator, such as a differential drive robot
+public:
+  double_actuator* dblActuator;
+  sensor* Sensor1;
+  sensor* Sensor2;
+  int output1, output2;
+  // a plant block should still have an input block pointer  
+  plant_with_double_actuator_two_sensors(double_actuator *myact, sensor *mysense1, sensor *mysense2);
+  //int get_reading();
+  //void send_commands();
+  //int read_output(float t);
+  int find_output(float t);
+  int find_output();  
+};
+
+
+
 class summing_junction: public block{
  public:
   block* input1;
