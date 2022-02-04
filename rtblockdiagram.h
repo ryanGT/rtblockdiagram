@@ -120,10 +120,17 @@ public:
 };
 
 
-class sensor{
+class sensor: public block{
+  // - a sensor is a block with no input
+  // - it will often be part of a plant
  public:
   // pure virtual function
-  virtual int get_reading() = 0;
+  virtual int get_reading() = 0;//get_reading should probably set output to be safe
+
+  int find_output(){
+    output = get_reading();
+    return(output);
+  };
 };
 
 

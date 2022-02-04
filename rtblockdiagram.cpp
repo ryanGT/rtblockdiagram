@@ -159,7 +159,8 @@ void encoder::encoderISR()
 
 
 int encoder::get_reading(){
-    return(encoder_count);
+  output = encoder_count;
+  return(encoder_count);
 };
 
 
