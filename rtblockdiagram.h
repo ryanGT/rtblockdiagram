@@ -320,4 +320,23 @@ class saturation_block: public block_with_one_input{
 };
 
 
+class sat2_adjustable_block: public saturation_block{
+  //a class for a saturation block whose max and min values can be set
+  //by the code.  I used to have functions called mysat2 that provided
+  //this functionality (hence the name).
+  //
+  // if the minimum is not specified, it is set to -mymax
+public:
+  int input_value;
+  int mymax, mymin;
+  //int output;
+  
+  sat2_adjustable_block(int max_in, block *in=NULL);
+  sat2_adjustable_block(int max_in, int min_in, block *in=NULL);
+
+  //int read_output(float t);
+  int find_output(float t);
+};
+  
+
 #endif

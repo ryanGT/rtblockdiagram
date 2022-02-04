@@ -417,3 +417,32 @@ int saturation_block::find_output(float t){
   output = mysat_rtbd(input_value);
   return(output);
 };
+
+
+sat2_adjustable_block::sat2_adjustable_block(int max_in=255, block *in=NULL){
+  mymax = max_in;
+  mymin = -mymax;
+  input = in;
+};
+
+
+sat2_adjustable_block::sat2_adjustable_block(int max_in=255, int min_in=-255, block *in=NULL){
+  mymax = max_in;
+  mymin = min_in;
+  input = in;
+};
+
+
+int sat2_adjustable_block::find_output(float t){
+  input_value = input->read_output();
+  if ( input_value > mymax ){
+    output = mymax;
+  }
+  else if ( input_value < mymin ){
+    output = mymin;
+  }
+  else{
+    output = input_value;
+  }
+  return(output);
+};
