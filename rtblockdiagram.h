@@ -47,7 +47,7 @@ public:
 class block_with_one_input: public block{
  public:
   block* input;
-  void set_input_block(block* new_input){
+  void set_input_block1(block* new_input){
     input = new_input;
   }
 };
