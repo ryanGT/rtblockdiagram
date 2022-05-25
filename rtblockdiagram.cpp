@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "rtblockdiagram.h"
+#include <Wire.h>
 
 int mysat_rtbd(int vin){
   int mymax = 255;
@@ -17,6 +18,13 @@ int mysat_rtbd(int vin){
   }
 
   return(vout);
+}
+
+
+byte getsecondbyte(int input){
+  byte output;
+  output = (byte)(input >> 8);
+  return output;
 }
 
 
@@ -255,6 +263,89 @@ plant_with_double_actuator_two_sensors::plant_with_double_actuator_two_sensors(d
   Sensor1 = mysense1;
   Sensor2 = mysense2;
 };
+
+plant_with_i2c_double_actuator_and_two_sensors::plant_with_i2c_double_actuator_and_two_sensors(int ACT_ADDR, sensor *mysense1, sensor *mysense2) : plant_with_double_actuator_two_sensors(NULL, mysense1, mysense2){
+  actuator_addr = ACT_ADDR;
+  Sensor1 = mysense1;
+  Sensor2 = mysense2;
+}
+
+
+void plant_with_i2c_double_actuator_and_two_sensors::send_commands(int i){
+  int speed1, speed2;
+  speed1 = input1->read_output();
+  speed2 = input2->read_output();
+  byte msb1, lsb1, msb2, lsb2, ilsb, imsb;
+  byte buf[7];
+
+  // on the mega side:
+  // n_msb = inArray[1];
+  // n_lsb = inArray[2];
+  // v1_msb = inArray[3];
+  // v1_lsb = inArray[4];
+  // v1 = reassemblebytes(v1_msb,v1_lsb);
+  // v2_msb = inArray[5];
+  // v2_lsb = inArray[6];
+  // v2 = reassemblebytes(v2_msb,v2_lsb);
+
+
+  // break into separate3 bytes for i2c transmission
+  ilsb = (byte)i;
+  imsb = getsecondbyte(i);
+  lsb1 = (byte)speed1;
+  msb1 = getsecondbyte(speed1);
+  lsb2 = (byte)speed2;
+  msb2 = getsecondbyte(speed2);
+
+  buf[0] = 3;
+  buf[1] = imsb;
+  buf[2] = ilsb;
+  buf[3] = msb1;
+  buf[4] = lsb1;
+  buf[5] = msb2;
+  buf[6] = lsb2;
+
+  // Serial.println("buf check");
+  // for (int k=0; k<7; k++){
+  //   Serial.print(buf[k]);
+  //   if (k<6){
+  //     Serial.print(",");
+  //   }
+  //   else{
+  //     Serial.print('\n');
+  //   }
+  // }
+  
+  Wire2.beginTransmission(actuator_addr);   // send the address and the write cmnd
+  Wire2.send(buf,7);                      // send three bytes
+  Wire2.endTransmission(); 
+};
+
+void plant_with_i2c_double_actuator_and_two_sensors::stop_motors(){
+  byte buf[7];
+  int num_bytes=7;
+  buf[0] = 3;
+  for (int k=1; k<num_bytes; k++){
+    buf[k] = 0;
+  }
+  Wire2.beginTransmission(actuator_addr);   // send the address and the write cmnd
+  Wire2.send(buf,7);                      // send three bytes
+  Wire2.endTransmission(); 
+};
+
+
+void plant_with_i2c_double_actuator_and_two_sensors::send_cal_cmd(){
+  byte buf[7];
+  int num_bytes=7;
+  buf[0] = 4;
+  for (int k=1; k<num_bytes; k++){
+    buf[k] = 0;
+  }
+  Wire2.beginTransmission(actuator_addr);   // send the address and the write cmnd
+  Wire2.send(buf,7);                      // send three bytes
+  Wire2.endTransmission(); 
+};
+
 
 int plant_with_double_actuator_two_sensors::find_output(){
   // in the loop code, the plant's find_output method is called, and
