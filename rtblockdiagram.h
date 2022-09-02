@@ -230,27 +230,27 @@ public:
   int find_output();  
 };
 
-
-class plant_with_i2c_double_actuator_and_two_sensors: public plant_with_double_actuator_two_sensors{
-  //a plant that has a double actuator, such as a differential drive robot
-public:
-  int actuator_addr;
-  sensor* Sensor1;
-  sensor* Sensor2;
-  int output1, output2;
-  // a plant block should still have an input block pointer  
-  plant_with_i2c_double_actuator_and_two_sensors(int ACT_ADDR, sensor *mysense1, sensor *mysense2);
-  //int get_reading();
-  //void send_commands();
-  //int read_output(float t);
-  void send_commands(int i);
-  void stop_motors();
-  void send_cal_cmd();  
-  //int find_output(float t);//<-- just inherit these
-  //int find_output();//<-- just inherit these
-};
-
-
+// disabling this; it is teensy only
+//class plant_with_i2c_double_actuator_and_two_sensors: public plant_with_double_actuator_two_sensors{
+//  //a plant that has a double actuator, such as a differential drive robot
+//public:
+//  int actuator_addr;
+//  sensor* Sensor1;
+//  sensor* Sensor2;
+//  int output1, output2;
+//  // a plant block should still have an input block pointer  
+//  plant_with_i2c_double_actuator_and_two_sensors(int ACT_ADDR, sensor *mysense1, sensor *mysense2);
+//  //int get_reading();
+//  //void send_commands();
+//  //int read_output(float t);
+//  void send_commands(int i);
+//  void stop_motors();
+//  void send_cal_cmd();  
+//  //int find_output(float t);//<-- just inherit these
+//  //int find_output();//<-- just inherit these
+//};
+//
+//
 
 
 class summing_junction: public block{
