@@ -153,7 +153,7 @@ class encoder: public sensor{
 class analog_sensor: public sensor{
  public:
   int analog_pin;
-  int output;
+  //int output;
 
   analog_sensor(int ANALOG_pin);
   
