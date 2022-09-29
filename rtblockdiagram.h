@@ -57,6 +57,7 @@ class block_with_one_input: public block{
 
 class output_block: public block_with_one_input{
  public:
+  int input_value;
   output_block(block *in=NULL);
   int find_output();
 };
