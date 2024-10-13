@@ -217,10 +217,61 @@ void encoder::encoderISR()
 };
 
 
+encoder_quad_sense::encoder_quad_sense(int PIN_A, int PIN_B){//: encoder(PIN_B){
+   encoderPinA = PIN_A;
+   encoderPinB = PIN_B;
+};
+
+void encoder_quad_sense::encoderISRA()
+{
+    // Test transition; since the interrupt will only fire on 'rising' we don't need to read pin A
+    //n++;
+    _EncoderBSet = digitalRead(encoderPinB);
+    _EncoderASet = digitalRead(encoderPinA);   // read the input pin
+					       //
+  
+    // and adjust counter + if A leads B
+    if (_EncoderASet != _EncoderBSet){
+	//A changed first
+      	encoder_count ++;
+    }
+    else {
+      	encoder_count --;
+    }
+};
+
+void encoder_quad_sense::encoderISRB()
+{
+    // Test transition; since the interrupt will only fire on 'rising' we don't need to read pin A
+    //n++;
+    _EncoderBSet = digitalRead(encoderPinB);
+    _EncoderASet = digitalRead(encoderPinA);   // read the input pin
+					       //
+  
+    // and adjust counter + if A leads B
+    if (_EncoderASet != _EncoderBSet){
+	//B changed first
+      	encoder_count --;
+    }
+    else {
+      	encoder_count ++;
+    }
+};
+
+
+
 int encoder::get_reading(){
   output = encoder_count;
   return(encoder_count);
 };
+
+
+int encoder_quad_sense::get_reading(){
+  output = encoder_count;
+  return(encoder_count);
+};
+
+
 
 
 analog_sensor::analog_sensor(int ANALOG_PIN){
@@ -295,6 +346,10 @@ void plant_with_double_actuator::send_commands(){
   speed1 = input1->read_output();
   speed2 = input2->read_output();
   dblActuator->send_commands(speed1, speed2);
+};
+
+void plant_with_double_actuator::send_commands(int in1, int in2){
+  dblActuator->send_commands(in1, in2);
 };
 
 

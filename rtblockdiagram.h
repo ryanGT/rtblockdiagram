@@ -199,6 +199,20 @@ class analog_sensor: public sensor{
 };
 
 
+class encoder_quad_sense: public sensor{
+public:
+  volatile bool _EncoderBSet, _EncoderASet;
+  volatile long encoder_count = 0;
+  int encoderPinA, encoderPinB;
+
+  encoder_quad_sense(int ENCODER_PIN_A, int ENCODER_PIN_B);
+  
+  void encoderISRA();
+  void encoderISRB();
+  int get_reading();
+};
+
+
 class plant: public block_with_one_input{
  public:
   actuator* Actuator;
@@ -245,6 +259,7 @@ public:
 
   int get_reading();
   void send_commands();
+  void send_commands(int in1, int in2);
   //int read_output(float t);
   int find_output(float t);
   int find_output();  
