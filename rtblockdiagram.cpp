@@ -521,10 +521,10 @@ int greater_than_block::find_output(float t){
   return(temp);
 };
 
-greater_than_block::greater_than_block(block *in1, block *in2){
-  input1 = in1;
-  input2 = in2;
-};
+//greater_than_block::greater_than_block(block *in1, block *in2){
+//  input1 = in1;
+//  input2 = in2;
+//};
 
 
 
