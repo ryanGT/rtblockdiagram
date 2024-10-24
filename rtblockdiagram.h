@@ -3,6 +3,8 @@
 
 #include "Arduino.h"
 
+#include <math.h>
+
 #define MAXLEN 10
 
 int mysat_rtbd(int vin);
@@ -61,6 +63,15 @@ class output_block: public block_with_one_input{
   output_block(block *in=NULL);
   int find_output();
 };
+
+
+class abs_block: public block_with_one_input{
+ public:
+   int input_value; 
+   int find_output();
+   abs_block();
+};
+
 
 class block_with_two_inputs: public block{
 public:

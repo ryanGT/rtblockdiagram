@@ -334,6 +334,14 @@ int plant_no_actuator::find_output(float t){
   return(output);
 };
 
+abs_block::abs_block(){};
+
+int abs_block::find_output(){
+    input_value = input->read_output();
+    output = abs(input_value);
+    return(output);
+};
+
 
 
 plant_with_double_actuator::plant_with_double_actuator(double_actuator *myact, sensor *mysense){
