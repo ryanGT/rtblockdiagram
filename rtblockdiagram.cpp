@@ -527,6 +527,81 @@ greater_than_block::greater_than_block(block *in1, block *in2){
 };
 
 
+
+output_block::output_block(block *in){
+    input = in;
+};
+
+int output_block::find_output(){
+    input_value = input->read_output();
+    output = (int)(input_value);
+    return(output);
+};
+
+
+int logical_block::find_output(){
+    // this is kind of like a virtual class, but I stink
+    // at doing virtual classes correctly
+    // - each derived class should provide its own
+    //   version of this method
+    // - this method exists in the pseudo-virtual class
+    //   so that find_out(float t) can call this method
+    output = -1;
+    return(output);
+};
+
+int logical_block::find_output(float t){
+  int temp = find_output();
+  return(temp);
+};
+
+logical_block::logical_block(block *in1, block *in2){
+  input1 = in1;
+  input2 = in2;
+};
+
+int less_than_block::find_output(){
+  //int output;
+  value1 = input1->read_output();
+  value2 = input2->read_output();
+  if (value1 < value2){
+    output = 1;
+  }
+  else{
+      output = 0;
+  }
+  return(output);
+};
+
+int and_block::find_output(){
+  //int output;
+  value1 = input1->read_output();
+  value2 = input2->read_output();
+  if ((value1 > 0) && (value2 > 0)){
+    output = 1;
+  }
+  else{
+      output = 0;
+  }
+  return(output);
+};
+
+
+int or_block::find_output(){
+  //int output;
+  value1 = input1->read_output();
+  value2 = input2->read_output();
+  if ((value1 > 0) || (value2 > 0)){
+    output = 1;
+  }
+  else{
+      output = 0;
+  }
+  return(output);
+};
+
+
+
 int addition_block::find_output(){
   //int output;
   value1 = input1->read_output();
@@ -544,7 +619,8 @@ int subtraction_block::find_output(){
   return(output);
 };
 
-if_block::if_block(block *bool_in=NULL, block *in1=NULL, block *in2=NULL){
+//if 1
+if_block::if_block(block *bool_in, block *in1, block *in2){
   bool_block = bool_in;
   input1 = in1;
   input2 = in2;  
@@ -568,17 +644,6 @@ int if_block::find_output(){
     output = value2;
   }
   return(output);
-};
-
-
-output_block::output_block(block *in){
-    input = in;
-};
-
-int output_block::find_output(){
-    input_value = input->read_output();
-    output = (int)(input_value);
-    return(output);
 };
 
 

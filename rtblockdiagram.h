@@ -330,15 +330,47 @@ class summing_junction: public block{
   int find_output(float t);
 };
 
-
-class greater_than_block: public block_with_two_inputs{
+class logical_block: public block_with_two_inputs{
 public:
-  greater_than_block(block *in1=NULL, block *in2=NULL);
+  logical_block(block *in1=NULL, block *in2=NULL);
   int find_output();
   int find_output(float t);
 };
 
-class addition_block: public greater_than_block{
+
+class greater_than_block: public logical_block{
+public:
+  //greater_than_block(block *in1=NULL, block *in2=NULL);
+  int find_output();
+  int find_output(float t);
+};
+
+class less_than_block: public logical_block{
+public:
+  //less_than_block(block *in1=NULL, block *in2=NULL);
+  int find_output();
+  int find_output(float t);
+};
+
+class and_block: public logical_block{
+public:
+  //and_block(block *in1=NULL, block *in2=NULL);
+  int find_output();
+  int find_output(float t);
+};
+
+class or_block: public logical_block{
+public:
+  //or_block(block *in1=NULL, block *in2=NULL);
+  int find_output();
+  int find_output(float t);
+};
+
+
+
+
+class addition_block: public logical_block{
+    //note: I might want to create a math block
 public:
   //addition_block(block *in1=NULL, block *in2=NULL);
   int find_output();
@@ -346,7 +378,8 @@ public:
 };
 
 
-class subtraction_block: public greater_than_block{
+
+class subtraction_block: public logical_block{
 public:
   //subtraction_block(block *in1=NULL, block *in2=NULL);
   int find_output();
@@ -355,7 +388,7 @@ public:
 
 
 
-class if_block: public greater_than_block{
+class if_block: public logical_block{
 public:
   block *bool_block;
   int bool_value;
@@ -363,6 +396,7 @@ public:
   void set_inputs(block *BOOLIN, block *IN1, block *IN2);
   int find_output();
 };
+
 
 
 class P_control_block: public block_with_one_input{
