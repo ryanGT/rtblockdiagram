@@ -444,8 +444,10 @@ class digcomp_block: public block_with_one_input{
   float _in_vect[MAXLEN];
   float _out_vect[MAXLEN];
   int input_value;
+  float gain;
   //int output;
-  digcomp_block(float *b_vect, float *a_vect, int len_in, int len_out, block *in=NULL);
+  digcomp_block(float *b_vect, float *a_vect, int len_in, int len_out, 
+                     float GAIN=1.0, block *in=NULL);
   //digcomp_block(float *b_vect, float *a_vect, block *in);
   //float calc_out(float new_in);
   //int read_output(float t);

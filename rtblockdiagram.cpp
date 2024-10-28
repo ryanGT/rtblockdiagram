@@ -692,7 +692,8 @@ void PD_control_block::save_values(float t){
 };
 
 
-digcomp_block::digcomp_block(float *b_vect, float *a_vect, int len_in, int len_out, block *in=NULL){
+digcomp_block::digcomp_block(float *b_vect, float *a_vect, int len_in, 
+              int len_out, float GAIN, block *in){
   _a_vect = a_vect;
   _b_vect = b_vect;
   //_len_in = sizeof(_b_vect)/sizeof(_b_vect[0]);
@@ -700,6 +701,7 @@ digcomp_block::digcomp_block(float *b_vect, float *a_vect, int len_in, int len_o
   _len_in = len_in;
   _len_out = len_out;
   input = in;
+  gain = GAIN;
 }
 
 
@@ -713,6 +715,7 @@ int digcomp_block::find_output(float t){
   for(i=0; i<_len_in; i++){
     new_out += _in_vect[i]*_b_vect[i];
   }
+  new_out *= gain;
   for(i=1; i<_len_out; i++){
     new_out -= _out_vect[i-1]*_a_vect[i];//out_vect hasn't been shifted yet, so the indices are off by 1
   }
