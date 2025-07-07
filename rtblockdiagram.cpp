@@ -334,6 +334,32 @@ int plant_no_actuator::find_output(float t){
   return(output);
 };
 
+plant_with_stepper::plant_with_stepper(stepper *MyStepper){
+  mystepper = MyStepper;
+};
+
+int plant_with_stepper::get_reading(){
+  // this is the main weird thing about a plant with a 
+  // stepper motor: the actuator also has the pseudo
+  // sensor value
+  return mystepper->get_reading();
+};
+
+
+int plant_with_stepper::find_output(float t){
+     return mystepper->get_reading();
+};
+
+void plant_with_stepper::send_command(){
+  int speed;
+  speed = input->read_output();
+  mystepper->send_command(speed);
+};
+
+void plant_with_stepper::send_command(int speed){
+  mystepper->send_command(speed);
+}
+
 abs_block::abs_block(){};
 
 int abs_block::find_output(){
@@ -862,5 +888,78 @@ PI_control_block::PI_control_block(float KP, float KI, block *in){
     myint = 0.0;
 };
 
+
+
+
+stair_input::stair_input(float sensor_interval_in, float readings_step_in, int clicks_step_in, int max_clicks_in) {
+  sensor_interval = sensor_interval_in;
+  readings_step = readings_step_in;
+  clicks_step = clicks_step_in;
+  max_clicks = max_clicks_in;
+}
+
+int stair_input::find_output(float t) {
+  float stair_time = sensor_interval * readings_step;
+
+  int steps = (int)(t / stair_time);                     
+  int cycle_length = 2 * max_clicks;                     
+  int cycle_pos = (steps * clicks_step) % cycle_length;  
+
+  if (cycle_pos <= max_clicks) {
+      output = cycle_pos;        // Ascending
+  } else {
+      output = cycle_length - cycle_pos;  // Descending
+  }
+
+  return output;
+}
+
+
+
+
+stepper::stepper(int DirPin, int StepPin){
+ 
+  stepPin = StepPin;
+  dirPin = DirPin;
+  dir = 0;
+  curClicks=0;
+  outputState=0;
+
+}
+
+void stepper::setup() {
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
+  digitalWrite(stepPin, LOW);
+  digitalWrite(dirPin, LOW);
+}
+
+void stepper::send_command(int desClicks) {
+
+  //int desClicks = input->read_output();  // Get desired click position from input block
+  int error = desClicks - curClicks;
+
+  if (error > 0) {
+    dir = 1;
+    curClicks++;
+    toggleOutput();
+  }
+  else if (error < 0) {
+    dir = 0;
+    curClicks--;
+    toggleOutput();
+  }
+}
+
+void stepper::toggleOutput() {
+  digitalWrite(dirPin, dir); // set direction
+  outputState = !outputState; // toggle step pin state
+  digitalWrite(stepPin, outputState); // pulse step
+}
+
+int stepper::get_reading(){
+  output = curClicks;
+  return(curClicks);
+};
 
 

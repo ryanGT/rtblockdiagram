@@ -534,6 +534,55 @@ class PID_control_block: public PI_control_block{
 };
 
 
+class stair_input: public block {
+public:
+  float sensor_interval;
+  float readings_step;
+  int clicks_step;
+  int max_clicks;
+
+  stair_input(float sensor_interval, float readings_step, int clicks_step, int max_clicks);
+  int find_output(float t);
+};
+
+
+
+
+class stepper: public actuator{
+ public:
+  
+  int dirPin;
+  int stepPin;
+  int dir;
+  int curClicks;
+  int outputState;
+
+  int DirPin, StepPin;
+  int output;
+  stepper(int DirPin, int StepPin);
+
+  void setup();
+  void send_command(int speed);
+  void toggleOutput();
+  int get_reading();
+};
+
+class plant_with_stepper: public block_with_one_input{
+  // used to model a plant that has a stepper motor, 
+  // where the click count of the stepper motor is a pseudo sensor
+  // - so, there is no actual sensor
+public:
+  stepper* mystepper;
+  // a plant block should still have an input block pointer  
+  plant_with_stepper(stepper *MyStepper);
+
+  int get_reading();
+  void send_command();//keeping these for consitency
+  void send_command(int speed);
+  //int read_output(float t);
+  int find_output(float t);
+};
+
 
 
 #endif
