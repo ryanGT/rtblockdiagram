@@ -347,7 +347,8 @@ int plant_with_stepper::get_reading(){
 
 
 int plant_with_stepper::find_output(float t){
-     return mystepper->get_reading();
+     output = mystepper->get_reading();
+     return(output);
 };
 
 void plant_with_stepper::send_command(){
