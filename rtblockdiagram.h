@@ -583,6 +583,14 @@ public:
   int find_output(float t);
 };
 
+class prev_hold_block: public block_with_one_input{
+ public:
+   int input_value; 
+   int find_output();
+   int prev_input;
+   prev_hold_block();
+};
+
 
 
 #endif
